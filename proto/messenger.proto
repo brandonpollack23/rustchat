@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package rustchat;
+
+service Messenger {
+    rpc SendMessage(Message) returns (MessageAck) {}
+}
+
+message Message {
+    string content = 1;
+}
+
+message MessageAck {}
