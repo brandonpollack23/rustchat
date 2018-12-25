@@ -1,13 +1,14 @@
 syntax = "proto3";
 
-package rustchat;
+package chat_protocol;
 
-service Messenger {
+service ChatEndpoint {
     rpc SendMessage(Message) returns (MessageAck) {}
 }
 
 message Message {
-    string content = 1;
+    string sender = 1;
+    string content = 2;
 }
 
 message MessageAck {}

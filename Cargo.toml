@@ -1,0 +1,17 @@
+[package]
+name = "rustchat"
+version = "0.1.0"
+authors = ["Brandon Pollack <brandonpollack23@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+chashmap = ""
+file_scanner = ""
+futures = ""
+grpcio = ""
+num = ""
+num_cpus = ""
+protobuf = ""
+
+[build-dependencies]
+protoc-grpcio = ""
