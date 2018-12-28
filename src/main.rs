@@ -48,9 +48,10 @@ fn main() {
   // TODO make messages more complex type and not just strings, with a read marker etc, then show that in dashboard
   // dont show read messages unless requested in read option
   // TODO delete build false in toml, only fails b/c windows blows
+  // TODO more threads for server?
   let user_to_thread_messages = Arc::new(ConcHashMap::<String, Vec<String>>::new());
 
-  let env = Arc::new(Environment::new(num_cpus::get()));
+  let env = Arc::new(Environment::new(1));
   let service = create_chat_endpoint(ChatEndpointImpl { user_to_thread_messages_: user_to_thread_messages.clone() });
   let mut server = ServerBuilder::new(env)
     .register_service(service)
@@ -68,6 +69,7 @@ fn main() {
     let mut scanner = Scanner::new(io::stdin());
     let selection = scanner.next_int();
 
+    println!("DEBUG SELECTION IS: {:?}", selection);
     match selection {
       Some(1) => refresh_dashboard(&user_to_thread_messages),
       Some(2) => try_view_messages_user(&mut scanner, &user_to_thread_messages),
@@ -103,10 +105,11 @@ fn try_send_message_to_user<T: Read + Sized>(scanner: &mut Scanner<T>) {
   // TODO implement by looking through set of users we know about...
   let receiver = scanner.next();
   let message_content = scanner.next();
+  println!("DEBUG: SENDING MESSAGE SELECTED with user: {:?}, message: {:?}", receiver, message_content);
   // TODO remove
   // This is just client code.
   let env = Arc::new(Environment::new(1));
-  let ch = ChannelBuilder::new(env).connect(&format!("localhost:{}", CHAT_PORT));
+  let ch = ChannelBuilder::new(env).connect(&format!("127.0.0.1:{}", CHAT_PORT));
   let client = ChatEndpointClient::new(ch);
 
   let req = Message {
