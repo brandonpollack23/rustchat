@@ -47,6 +47,7 @@ fn main() {
   // TODO look for others and add ping messaging and a list of them seperate from teh map
   // TODO make messages more complex type and not just strings, with a read marker etc, then show that in dashboard
   // dont show read messages unless requested in read option
+  // TODO delete build false in toml, only fails b/c windows blows
   let user_to_thread_messages = Arc::new(ConcHashMap::<String, Vec<String>>::new());
 
   let env = Arc::new(Environment::new(num_cpus::get()));
