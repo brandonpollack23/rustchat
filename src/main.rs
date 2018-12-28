@@ -2,7 +2,7 @@ use concurrent_hashmap::*;
 use crate::proto_gen::messenger::*;
 use crate::proto_gen::messenger_grpc::*;
 use file_scanner::Scanner;
-use grpcio::{Environment, RpcContext, ServerBuilder, UnarySink};
+use grpcio::{ChannelBuilder, Environment, RpcContext, ServerBuilder, UnarySink};
 use std::io;
 use std::io::Read;
 use std::sync::Arc;
@@ -54,7 +54,7 @@ fn main() {
   let service = create_chat_endpoint(ChatEndpointImpl { user_to_thread_messages_: user_to_thread_messages.clone() });
   let mut server = ServerBuilder::new(env)
     .register_service(service)
-    .bind("localhost", CHAT_PORT)
+    .bind("127.0.0.1", CHAT_PORT)
     .build()
     .unwrap();
   server.start();
@@ -99,6 +99,21 @@ fn try_view_messages_user<T: Read + Sized>(scanner: &mut Scanner<T>, messages_ma
   }
 }
 
-fn try_send_message_to_user<T: Read + Sized>(_scanner: &mut Scanner<T>) {
-  unimplemented!();
+fn try_send_message_to_user<T: Read + Sized>(scanner: &mut Scanner<T>) {
+  // TODO implement by looking through set of users we know about...
+  let receiver = scanner.next();
+  let message_content = scanner.next();
+  // TODO remove
+  // This is just client code.
+  let env = Arc::new(Environment::new(1));
+  let ch = ChannelBuilder::new(env).connect(&format!("localhost:{}", CHAT_PORT));
+  let client = ChatEndpointClient::new(ch);
+
+  let req = Message {
+    sender: String::from("me"),
+    content: message_content.expect("error unwrapping message option"),
+    ..Default::default()
+  };
+
+  client.send_message(&req).expect("rpc failed :(");
 }
