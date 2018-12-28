@@ -4,6 +4,6 @@ fn main() {
   protoc_grpcio::compile_grpc_protos(
     &["messenger.proto"],
     &[proto_root],
-    "src/proto"
+    "src/proto_gen"
   ).expect("Failed to compile gRPC protos");
 }
